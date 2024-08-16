@@ -1,4 +1,4 @@
-export const popups = document.querySelectorAll('.popup');
+export const modalPopup = document.querySelectorAll('.popup');
 let escCallback;
 
 export function openPopup(popup) {
@@ -27,4 +27,13 @@ export function openPopupByButton(button, popup) {
   });
 }
 
+const popupImage = document.querySelector('.popup_type_image');
+const popupImageImage = popupImage.querySelector('.popup__image');
+const popupImageCaption = popupImage.querySelector('.popup__caption');
 
+export function openImagePopup(link, alt) {
+  popupImageImage.src = link;
+  popupImageImage.alt = alt;
+  popupImageCaption.textContent = alt;
+  openPopup(popupImage);
+}

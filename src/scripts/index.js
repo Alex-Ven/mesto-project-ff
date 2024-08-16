@@ -1,7 +1,19 @@
 import "../pages/index.css";
-import { createCard, removeCard, popupAddNewCard, addCardToCardsArray, likeCard } from "./card.js";
+import {
+  createCard,
+  removeCard,
+  popupAddNewCard,
+  addCardToCardsArray,
+  likeCard,
+} from "./card.js";
 
-import { openPopup, closePopup, openPopupByButton, popups } from "./modal.js";
+import {
+  openPopup,
+  closePopup,
+  openPopupByButton,
+  modalPopup,
+  openImagePopup,
+} from "./modal.js";
 
 const popupProfile = document.querySelector(".popup_type_edit");
 const editButton = document.querySelector(".profile__edit-button");
@@ -37,12 +49,10 @@ function changeProfile(evt) {
   profileForm.reset();
 }
 
-
 profileForm.addEventListener("submit", changeProfile);
-newPlace.addEventListener('submit', addCardToCardsArray);
+newPlace.addEventListener("submit", addCardToCardsArray);
 
-
-popups.forEach(function (popup) {
+modalPopup.forEach(function (popup) {
   popup.addEventListener("click", function (evt) {
     if (
       evt.target === evt.currentTarget ||
@@ -54,4 +64,11 @@ popups.forEach(function (popup) {
 });
 
 openPopupByButton(addButton, popupAddNewCard);
-likeCard(likeButton)
+
+
+const cardToLike = document.querySelector(".places__list");
+cardToLike.addEventListener("click", function (evt) {
+  if (evt.target.classList.contains("card__like-button")) {
+    likeCard(evt.target);
+  }
+});
