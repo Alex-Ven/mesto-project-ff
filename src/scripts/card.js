@@ -1,13 +1,13 @@
 import { initialCards } from "./cards.js";
-import { closePopup, openImagePopup } from "./modal.js";
+import { closePopup, openPicturePopup } from "./modal.js";
 const cardTemplate = document.querySelector("#card-template").content;
 export const cardsPlacesList = document.querySelector(".places__list");
-export const popupAddNewCard = document.querySelector(".popup_type_new-card");
+export const popupAddCard = document.querySelector(".popup_type_new-card");
 const newPlace = document.forms.newPlace;
 const placeName = newPlace.querySelector(".popup__input_type_card-name");
 const placeLink = newPlace.querySelector(".popup__input_type_url");
 
-export function createCard(cardData, deleteCardFn, likeCard, openImagePopup) {
+export function createCard(cardData, deleteCardFn, likeCard, openPicturePopup) {
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
 
   const cardImage = cardElement.querySelector(".card__image");
@@ -22,7 +22,7 @@ export function createCard(cardData, deleteCardFn, likeCard, openImagePopup) {
   cardDeleteButton.addEventListener("click", deleteCardFn);
 
   cardImage.addEventListener('click', function () {
-    openImagePopup(cardData.link, cardData.name);
+    openPicturePopup(cardData.link, cardData.name);
   });
 
   return cardElement;
@@ -30,7 +30,7 @@ export function createCard(cardData, deleteCardFn, likeCard, openImagePopup) {
 }
 
 initialCards.forEach(function (cardData) {
-  const cardElement = createCard(cardData, removeCard, likeCard, openImagePopup);
+  const cardElement = createCard(cardData, removeCard, likeCard, openPicturePopup);
   cardsPlacesList.append(cardElement);
 });
 
@@ -44,15 +44,15 @@ export function likeCard(likeButton) {
     }
   
 
-export function addCardToCardsArray(evt) {
+export function addCardToPlacesList(evt) {
   evt.preventDefault();
   const addedCard = {
     name: placeName.value,
     link: placeLink.value,
   };
-  const newPlaceCard = createCard(addedCard, removeCard, likeCard, openImagePopup);
+  const newPlaceCard = createCard(addedCard, removeCard, likeCard, openPicturePopup);
   cardsPlacesList.prepend(newPlaceCard, cardsPlacesList.firstChild);
 
-  closePopup(popupAddNewCard);
+  closePopup(popupAddCard);
   newPlace.reset();
 }

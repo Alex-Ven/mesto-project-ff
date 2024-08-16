@@ -4,7 +4,7 @@ let escCallback;
 export function openPopup(popup) {
   popup.classList.add('popup_is-opened');
   escCallback = function (evt) {
-    closePopapEsc(evt, popup);
+    closePopapByEsc(evt, popup);
   };
   document.addEventListener('keydown', escCallback);
 }
@@ -15,7 +15,7 @@ export function closePopup(popup) {
   document.removeEventListener('keydown', escCallback);
 }
 
-function closePopapEsc(evt, popup) {
+function closePopapByEsc(evt, popup) {
   if (evt.key === 'Escape') {
     closePopup(popup);
   }
@@ -27,13 +27,13 @@ export function openPopupByButton(button, popup) {
   });
 }
 
-const popupImage = document.querySelector('.popup_type_image');
-const popupImageImage = popupImage.querySelector('.popup__image');
-const popupImageCaption = popupImage.querySelector('.popup__caption');
+const picturePopup = document.querySelector('.popup_type_image');
+const picturePopupImage = picturePopup.querySelector('.popup__image');
+const picturePopupCaption = picturePopup.querySelector('.popup__caption');
 
-export function openImagePopup(link, alt) {
-  popupImageImage.src = link;
-  popupImageImage.alt = alt;
-  popupImageCaption.textContent = alt;
-  openPopup(popupImage);
+export function openPicturePopup(link, alt) {
+  picturePopupImage.src = link;
+  picturePopupImage.alt = alt;
+  picturePopupCaption.textContent = alt;
+  openPopup(picturePopup);
 }

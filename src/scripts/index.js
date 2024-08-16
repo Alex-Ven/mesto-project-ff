@@ -2,8 +2,8 @@ import "../pages/index.css";
 import {
   createCard,
   removeCard,
-  popupAddNewCard,
-  addCardToCardsArray,
+  popupAddCard,
+  addCardToPlacesList,
   likeCard,
 } from "./card.js";
 
@@ -12,12 +12,12 @@ import {
   closePopup,
   openPopupByButton,
   modalPopup,
-  openImagePopup,
+  openPicturePopup,
 } from "./modal.js";
 
 const popupProfile = document.querySelector(".popup_type_edit");
 const editButton = document.querySelector(".profile__edit-button");
-const likeButton = document.querySelector(".card__like-button");
+
 
 const addButton = document.querySelector(".profile__add-button");
 
@@ -29,17 +29,17 @@ const profileFormDescription = profileForm.querySelector(
   ".popup__input_type_description"
 );
 
-function setProfileFormValues() {
+function setProfileForm() {
   profileFormName.value = profileName.textContent;
   profileFormDescription.value = profileDescription.textContent;
 }
 
-function openProfilePopupByButton() {
-  setProfileFormValues();
+function openProfilePopup() {
+  setProfileForm();
   openPopup(popupProfile);
 }
 
-editButton.addEventListener("click", openProfilePopupByButton);
+editButton.addEventListener("click", openProfilePopup);
 
 function changeProfile(evt) {
   evt.preventDefault();
@@ -50,7 +50,7 @@ function changeProfile(evt) {
 }
 
 profileForm.addEventListener("submit", changeProfile);
-newPlace.addEventListener("submit", addCardToCardsArray);
+newPlace.addEventListener("submit", addCardToPlacesList);
 
 modalPopup.forEach(function (popup) {
   popup.addEventListener("click", function (evt) {
@@ -63,7 +63,7 @@ modalPopup.forEach(function (popup) {
   });
 });
 
-openPopupByButton(addButton, popupAddNewCard);
+openPopupByButton(addButton, popupAddCard);
 
 
 const cardToLike = document.querySelector(".places__list");
