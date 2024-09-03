@@ -8,6 +8,25 @@ import {
   cardsPlacesList,
 } from "./card.js";
 
+import {
+  enableValidation,
+  validationSettings,
+  clearValidation,
+} from "./validation";
+
+import {
+  getUserData,
+  getInitialCards,
+  updateAvatar,
+  patchUserData,
+  postNewCard,
+} from "./api.js";
+
+let userAvatar = "";
+let userId = "";
+
+enableValidation(validationSettings);
+
 const popupAddCard = document.querySelector(".popup_type_new-card");
 const popupProfile = document.querySelector(".popup_type_edit");
 const addButton = document.querySelector(".profile__add-button");
@@ -15,13 +34,17 @@ const editButton = document.querySelector(".profile__edit-button");
 const profileName = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileForm = document.forms.editProfile;
+const avatarFormElement = document.forms.avatarForm;
+const avatarForm = document.querySelector(".popup_type-avatar");
+const profileAvatar = document.querySelector(".profile__image");
+const formInput = profileForm.querySelector(".popup__input");
 const profileFormName = profileForm.querySelector(".popup__input_type_name");
 const profileFormDescription = profileForm.querySelector(
   ".popup__input_type_description"
 );
 const newPlaceForm = document.forms.newPlace;
 const newPlaceCardName = newPlaceForm.elements["place-name"];
-const newPlaceCardlink = newPlaceForm.elements["link"];
+const newPlaceCardlink = newPlaceForm.elements["place-link"];
 const picturePopup = document.querySelector(".popup_type_image");
 const picturePopupImage = document.querySelector(".popup__image");
 const picturePopupCaption = document.querySelector(".popup__caption");
@@ -35,21 +58,23 @@ function openPicturePopup(link, alt) {
 }
 
 function addCardToPlacesList(evt) {
-  evt.preventDefault();
-  const addedCard = {
-    name: newPlaceCardName.value,
-    link: newPlaceCardlink.value,
-    alt: newPlaceCardName.value,
-  };
-  const newPlaceCard = createCard(
-    addedCard,
-    deleteCardFn,
-    likeCardFn,
-    openPicturePopup
-  );
-  cardsPlacesList.prepend(newPlaceCard, cardsPlacesList.firstChild);
-  closePopup(popupAddCard);
-  newPlaceForm.reset();
+  evt.preventDefault()
+  function makeRequest() {
+    return postNewCard(newPlaceCardName.value, newPlaceCardlink.value )
+    .then((addedCard) => {
+      const newPlaceCard = createCard(
+        userId,
+        addedCard,
+        deleteCardFn,
+        likeCardFn,
+        openPicturePopup
+      );
+      cardsPlacesList.prepend(newPlaceCard);
+      closePopup(popupAddCard);
+      newPlaceForm.reset();
+    });
+  }
+  handleSubmit(makeRequest, evt);
 }
 
 function setProfileForm() {
@@ -59,21 +84,59 @@ function setProfileForm() {
 
 function changeProfile(evt) {
   evt.preventDefault();
-  profileName.textContent = profileFormName.value;
-  profileDescription.textContent = profileFormDescription.value;
-  closePopup(popupProfile);
-  profileForm.reset();
+  function makeRequest() {
+    const name = profileFormName.value;
+    const about = profileFormDescription.value;
+    return patchUserData(name, about).then((dataUser) => {
+      profileName.textContent = dataUser.name;
+      profileDescription.textContent = dataUser.about;
+      console.dir(name, about);
+      closePopup(popupProfile);
+      profileForm.reset();
+    });
+  }
+  handleSubmit(makeRequest, evt);
 }
 
 function openProfilePopup() {
+  clearValidation(profileForm, validationSettings);
   setProfileForm();
   openPopup(popupProfile);
 }
 
+profileAvatar.addEventListener("click", function () {
+  clearValidation(avatarForm, validationSettings);
+  openPopup(avatarForm);
+});
+
+function changeProfileAvatar(evt) {
+  evt.preventDefault();
+  const saveButton = evt.submitter;
+  const avatarUrl = avatarFormElement.elements["avatar-link"].value;
+  renderLoading(true, saveButton);
+
+  updateAvatar(avatarUrl)
+    .then((res) => {
+      profileAvatar.setAttribute(
+        "style",
+        `background-image: url('${res.avatar}')`
+      );
+      closePopup(avatarForm);
+    })
+    .catch((error) => {
+      console.error("Ошибка при сохранении аватара:", error);
+    })
+    .finally(() => {
+      renderLoading(false, saveButton);
+    });
+}
+
 newPlaceForm.addEventListener("submit", addCardToPlacesList);
 profileForm.addEventListener("submit", changeProfile);
+avatarFormElement.addEventListener("submit", changeProfileAvatar);
 
 addButton.addEventListener("click", function () {
+  clearValidation(newPlaceForm, validationSettings);
   openPopup(popupAddCard);
 });
 editButton.addEventListener("click", openProfilePopup);
@@ -89,12 +152,58 @@ popupCloseButtons.forEach(function (popup) {
   });
 });
 
-initialCards.forEach(function (cardData) {
-  const cardElement = createCard(
-    cardData,
-    deleteCardFn,
-    likeCardFn,
-    openPicturePopup
-  );
-  cardsPlacesList.append(cardElement);
-});
+Promise.all([getInitialCards(), getUserData()])
+  .then(([initialCards, userData]) => {
+    userAvatar = userData.avatar;
+    userId = userData._id;
+    profileName.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
+
+    initialCards.forEach(function (cardData) {
+      const cardElement = createCard(
+        userId,
+        cardData,
+        deleteCardFn,
+        likeCardFn,
+        openPicturePopup
+      );
+      cardsPlacesList.append(cardElement);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+function renderLoading(
+  isLoading,
+  button,
+  initialText = "Сохранить",
+  loadingText = "Сохранение..."
+) {
+  if (isLoading) {
+    button.textContent = loadingText;
+  } else {
+    button.textContent = initialText;
+  }
+}
+
+export function handleSubmit(request, evt, loadingText = "Сохранение...") {
+  evt.preventDefault();
+
+  const submitButton = evt.submitter;
+  const initialText = submitButton.textContent;
+  renderLoading(true, submitButton, initialText, loadingText);
+
+  
+  request()
+    .then(() => {
+      evt.target.reset(); 
+    })
+    .catch((err) => {
+      console.error(`Ошибка: ${err}`);
+    })
+    .finally(() => {
+      renderLoading(false, submitButton, initialText, loadingText);
+    });
+}
