@@ -56,7 +56,7 @@
               maxlength="40"
               required
             />
-            <span class="name-input-error popup__input_type_error"></span>
+            <span id="name-input-error" class="name-input-error popup__input_error"></span>
             <input
               id="description-input"
               pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]+$"
@@ -69,8 +69,8 @@
               maxlength="200"
               required
             />
-            <span
-              class="description-input-error popup__input_type_error"
+            <span id="description-input-error"
+              class="description-input-error popup__input_error"
             ></span>
             <button type="submit" class="button popup__button">
               Сохранить
@@ -95,7 +95,7 @@
               maxlength="30"
               required
             />
-            <span class="place-input-error popup__input_type_error"></span>
+            <span id="place-input-error" class="place-input-error popup__input_error"></span>
             <input
               id="place-url-input"
               type="url"
@@ -104,7 +104,7 @@
               placeholder="Ссылка на картинку"
               required
             />
-            <span class="place-url-input-error popup__input_type_error"></span>
+            <span id="place-url-input-error" class="place-url-input-error popup__input_error"></span>
             <button type="submit" class="button popup__button">Создать</button>
           </form>
         </div>
@@ -133,7 +133,7 @@
           />
           <span
             id="avatar-link-error"
-            class="avatar-link-error popup__input_type_error"
+            class="avatar-link-error popup__input_error"
           ></span>
           <button type="submit" class="button popup__button">Сохранить</button>
         </form>

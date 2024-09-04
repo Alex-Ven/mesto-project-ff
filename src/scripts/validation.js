@@ -22,6 +22,7 @@ const showInputError = (
 const hideInputError = (formElement, inputElement, validationSettings) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   if (errorElement) {
+    inputElement.setCustomValidity("");
     inputElement.classList.remove(validationSettings.inputErrorClass);
     errorElement.classList.remove(validationSettings.errorClass);
     errorElement.textContent = "";
@@ -54,11 +55,11 @@ const hasInvalidInput = (inputList) => {
 
 const toggleButtonState = (inputList, buttonElement, validationSettings) => {
   if (hasInvalidInput(inputList)) {
-    buttonElement.classList.add(validationSettings.inactiveButtonClass);
     buttonElement.setAttribute("disabled", true);
+    buttonElement.classList.add(validationSettings.inactiveButtonClass);
   } else {
+    buttonElement.removeAttribute("disabled", false);
     buttonElement.classList.remove(validationSettings.inactiveButtonClass);
-    buttonElement.removeAttribute("disabled");
   }
 };
 
@@ -83,8 +84,8 @@ export const enableValidation = (validationSettings) => {
     document.querySelectorAll(validationSettings.formSelector)
   );
   formList.forEach((formElement) => {
-    formElement.addEventListener("submit", function (evt) {
-      evt.preventDefault();
+    formElement.addEventListener("submit", function (evt) { 
+      evt.preventDefault(); 
     });
     setEventListeners(formElement, validationSettings);
   });

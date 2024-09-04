@@ -1,5 +1,4 @@
 import "../pages/index.css";
-import { initialCards } from "./cards";
 import { openPopup, closePopup } from "./modal.js";
 import {
   createCard,
@@ -21,6 +20,10 @@ import {
   patchUserData,
   postNewCard,
 } from "./api.js";
+
+import {
+  renderLoading
+} from "./utils.js";
 
 let userAvatar = "";
 let userId = "";
@@ -72,6 +75,7 @@ function addCardToPlacesList(evt) {
       cardsPlacesList.prepend(newPlaceCard);
       closePopup(popupAddCard);
       newPlaceForm.reset();
+      clearValidation(newPlaceForm, validationSettings);
     });
   }
   handleSubmit(makeRequest, evt);
@@ -174,19 +178,6 @@ Promise.all([getInitialCards(), getUserData()])
   .catch((err) => {
     console.log(err);
   });
-
-function renderLoading(
-  isLoading,
-  button,
-  initialText = "Сохранить",
-  loadingText = "Сохранение..."
-) {
-  if (isLoading) {
-    button.textContent = loadingText;
-  } else {
-    button.textContent = initialText;
-  }
-}
 
 export function handleSubmit(request, evt, loadingText = "Сохранение...") {
   evt.preventDefault();
