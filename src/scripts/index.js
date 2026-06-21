@@ -53,10 +53,10 @@ const picturePopupImage = document.querySelector(".popup__image");
 const picturePopupCaption = document.querySelector(".popup__caption");
 const popupCloseButtons = document.querySelectorAll(".popup");
 
-function openPicturePopup(link, alt) {
+function openPicturePopup(link, name) {
   picturePopupImage.src = link;
-  picturePopupImage.alt = alt;
-  picturePopupCaption.textContent = alt;
+  picturePopupImage.alt = `Фотография с места - ${name}`;
+  picturePopupCaption.textContent = name;
   openPopup(picturePopup);
 }
 
