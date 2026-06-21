@@ -8,9 +8,9 @@ const presets = [
       safari: '11.1'
     },
 
-    // использовать полифилы для браузеров из свойства target
-    // по умолчанию babel использует полифилы библиотеки core-js
-    useBuiltIns: "entry"
+    // добавлять полифилы core-js@3 по мере использования в коде
+    useBuiltIns: "usage",
+    corejs: 3
   }]
 ];
 
